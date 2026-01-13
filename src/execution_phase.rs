@@ -23,7 +23,7 @@ struct PolyMarketMarket {
 
 #[derive(Serialize, Deserialize)]
 struct Market {
-    yes_price: u128,
+    yes_price: String,
     closed: bool,
 }
 
@@ -108,10 +108,8 @@ pub fn execution_phase() -> Result<()> {
                 anyhow::anyhow!("Invalid price format")
             })?;
 
-            let yes_price = (yes_price * 10000 as f64) as u128;
-
             Ok(Market {
-                yes_price: yes_price,
+                yes_price: yes_price.to_string(),
                 closed: market.closed,
             })
         })

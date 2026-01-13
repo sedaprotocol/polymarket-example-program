@@ -128,17 +128,148 @@ SEDA_RPC_ENDPOINT=https://rpc.devnet.seda.xyz
 SEDA_MNEMONIC=
 
 # Used for posting data request on the seda chain and configuring the consumer contract
-# You can get this by running `bunx seda-sdk oracle-program upload PATH_TO_BUILD`
+# You can get this by running `bun run deploy`
 ORACLE_PROGRAM_ID=
 ```
 
-## Integrations
+### SEDA Fast API
 
-### EVM (Ethereum Virtual Machine)
+For quick testing and development, you can use the SEDA Fast API to execute your Oracle Program without going through the full consensus process. This is ideal for debugging and rapid iteration.
 
-This starter kit includes an EVM integration using Hardhat, which allows you to connect your SEDA oracle data requests to EVM-compatible blockchains like Ethereum.
+#### Making a Request
 
-For setup instructions and detailed usage information, see the [EVM Hardhat Integration README](integrations/evm-hardhat/README.md).
+Use the following curl command to execute your Oracle Program via SEDA Fast:
+
+```bash
+curl -L -X POST 'https://fast-api.testnet.seda.xyz/execute?encoding=json&injectLastResult=success' \
+  -H 'Authorization: Bearer <bearer>' \
+  -H 'Content-Type: application/json' \
+  --data-raw '{
+    "execProgramId": "YOUR_PROGRAM_ID_HERE",
+    "execInputs": {
+      "event_slug": "2025-december-1st-2nd-3rd-hottest-on-record"
+    }
+  }'
+```
+
+Replace `YOUR_PROGRAM_ID_HERE` with your deployed Oracle Program ID and `<bearer>` with your API bearer token.
+
+#### Request Parameters
+
+- **`execProgramId`**: The ID of your deployed Oracle Program (get this from `bun run deploy`)
+- **`execInputs`**: Input data for your Oracle Program. For this PolyMarket example, provide:
+  - `event_slug`: The PolyMarket event identifier (e.g., "2025-december-1st-2nd-3rd-hottest-on-record")
+
+#### Query Parameters
+
+- **`encoding=json`**: Returns the result in JSON format for easy reading
+- **`injectLastResult=success`**: Only returns successful execution results
+
+#### Response Format
+
+The API returns a JSON response with the execution results:
+
+```json
+{
+  "_tag": "ExecuteResponse",
+  "data": {
+    "dataResult": {
+      "exitCode": 0,
+      "result": "7b226d61726b657473223a5b...", // Hex-encoded result
+    },
+    "result": {
+      "markets": [
+        {
+          "yes_price": "0.0005",
+          "closed": false
+        },
+        {
+          "yes_price": "0.996",
+          "closed": false
+        },
+        {
+          "yes_price": "0.0005",
+          "closed": false
+        },
+        {
+          "yes_price": "0.0045",
+          "closed": false
+        }
+      ]
+    }
+  }
+}
+```
+
+- **`exitCode: 0`**: Indicates successful execution
+- **`result` (hex)**: Raw hex-encoded output from your Oracle Program
+- **`result` (parsed)**: Human-readable JSON when using `encoding=json`
+
+#### Building and Deploying
+
+Before testing with SEDA Fast, build and deploy your Oracle Program:
+
+```bash
+# Build the Oracle Program
+bun run build
+
+# Deploy to get your program ID
+bun run deploy
+```
+
+#### Example: Testing This PolyMarket Oracle
+
+This Oracle Program fetches prediction market data from PolyMarket for climate and weather events:
+
+```bash
+curl -L -X POST 'https://fast-api.testnet.seda.xyz/execute?encoding=json&injectLastResult=success' \
+  -H 'Authorization: Bearer <bearer>' \
+  -H 'Content-Type: application/json' \
+  --data-raw '{
+    "execProgramId": "ae8ccc47060d2763490e963d22850517dd5e749818e13da00e4846f8a1c7a2a5",
+    "execInputs": {
+      "event_slug": "2025-december-1st-2nd-3rd-hottest-on-record"
+    }
+  }'
+```
+
+This will return market probability data for temperature record scenarios, with prices represented as decimal strings ("0.996" = 99.6% probability).
+
+#### Understanding Market Index Mapping
+
+The oracle returns an array of markets that directly corresponds to the markets within a PolyMarket event:
+
+**PolyMarket Event Structure:**
+```
+Event: "2025-december-1st-2nd-3rd-hottest-on-record"
+├── Market 0: "December 1st hottest" → yes_price: "0.0005" (0.05%)
+├── Market 1: "December 2nd hottest" → yes_price: "0.996" (99.6%) 
+├── Market 2: "December 3rd hottest" → yes_price: "0.0005" (0.05%)
+├── Market 3: "None of the above" → yes_price: "0.0045" (0.45%)
+```
+
+**Oracle Result Array:**
+```json
+{
+  "markets": [
+    {"yes_price": "0.0005", "closed": false}, // Index 0 = "December 1st hottest" market
+    {"yes_price": "0.996", "closed": false},  // Index 1 = "December 2nd hottest" market (99.6% likely!)
+    {"yes_price": "0.0005", "closed": false}, // Index 2 = "December 3rd hottest" market
+    {"yes_price": "0.0045", "closed": false}  // Index 3 = "None of the above" market
+  ]
+}
+```
+
+**Key Points:**
+- **Index preservation**: The array index in the oracle result directly maps to the market index in the PolyMarket event
+- **Consistent ordering**: Market 0 in PolyMarket = Index 0 in results, Market 1 = Index 1, etc.
+- **First outcome focus**: Each market returns only the "Yes" outcome price (the first outcome in PolyMarket's outcome array)
+- **Decimal string format**: Prices are returned as decimal strings representing probabilities (0.0 to 1.0 range)
+
+This mapping ensures that consumers of the oracle data can reliably know which market each result corresponds to by using the array index.
+
+> [!NOTE]
+> SEDA Fast is designed for testing and development. For production use cases, deploy your Oracle Program to the full SEDA network using the standard Data Request process.
 
 ## License
 
