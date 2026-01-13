@@ -9,6 +9,31 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "34ac096ce696dc2fcabef30516bb13c0a68a11d30131d3df6f04711467681b04"
 
 [[package]]
+name = "cfg-if"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "9330f8b2ff13f34540b44e946ef35111825727b38d33286ef986142615121801"
+
+[[package]]
+name = "const-hex"
+version = "1.17.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3bb320cac8a0750d7f25280aa97b09c26edfe161164238ecbbb31092b079e735"
+dependencies = [
+ "cfg-if",
+ "cpufeatures",
+]
+
+[[package]]
+name = "cpufeatures"
+version = "0.2.17"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59ed5838eebb26a2bb2e58f6d5b5316989ae9d08bab10e0e6d103e656d1b0280"
+dependencies = [
+ "libc",
+]
+
+[[package]]
 name = "ctor"
 version = "0.4.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -52,6 +77,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "d75a2a4b1b190afb6f5425f10f6a8f959d2ea0b9c2b1d79553551850539e4674"
 
 [[package]]
+name = "libc"
+version = "0.2.180"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bcc35a38544a891a5f7c865aca548a982ccb3b8650a5b06d0fd33a10283c56fc"
+
+[[package]]
 name = "memchr"
 version = "2.7.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -93,8 +124,9 @@ checksum = "6ea1a2d0a644769cc99faa24c3ad26b379b786fe7c36fd3c546254801650e6dd"
 
 [[package]]
 name = "seda-sdk-macros"
-version = "0.1.0"
-source = "git+https://github.com/sedaprotocol/seda-sdk?tag=rs-sdk%2Fv1.0.0-rc.6#1b10022691e57fb0248680c8b1375572d1395f79"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0438b5216cd73921ddb4b7021f0d2b3e23a95ba7d63071adb4610966cf7d6542"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -103,10 +135,12 @@ dependencies = [
 
 [[package]]
 name = "seda-sdk-rs"
-version = "1.0.0-rc.6"
-source = "git+https://github.com/sedaprotocol/seda-sdk?tag=rs-sdk%2Fv1.0.0-rc.6#1b10022691e57fb0248680c8b1375572d1395f79"
+version = "1.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2cb6dc22fc6624eae92c46ede22454040edd78bc5e423ed39370f6f0604c8367"
 dependencies = [
  "anyhow",
+ "const-hex",
  "ctor",
  "hex",
  "seda-sdk-macros",
