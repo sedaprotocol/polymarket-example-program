@@ -10,13 +10,13 @@ async function main() {
     const signer = await Signer.fromPartial(signingConfig);
 
     console.log('Posting and waiting for a result, this may take a little while..');
-
+    console.log(Buffer.from('46724').toString('hex'));
     const dataRequestInput: PostDataRequestInput = {
         consensusOptions: {
             method: 'none'
         },
         execProgramId: process.env.ORACLE_PROGRAM_ID,
-        execInputs: Buffer.from('27824'),
+        execInputs: Buffer.from('46724'),
         tallyInputs: Buffer.from([]),
         memo: Buffer.from(new Date().toISOString()),
     };

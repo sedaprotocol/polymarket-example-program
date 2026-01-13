@@ -16,6 +16,8 @@ struct PolyMarketEvent {
 struct PolyMarketMarket {
     #[serde(rename = "outcomePrices")]
     outcome_prices: String, // PolyMarket returns this as a JSON string, not an array
+    #[serde(rename = "groupItemTitle")]
+    group_item_title: String,
 }
 
 
