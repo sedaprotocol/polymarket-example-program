@@ -141,7 +141,7 @@ For quick testing and development, you can use the SEDA Fast API to execute your
 Use the following curl command to execute your Oracle Program via SEDA Fast:
 
 ```bash
-curl -L -X POST 'https://fast-api.testnet.seda.xyz/execute?encoding=json&injectLastResult=success' \
+curl -L -X POST 'https://fast-api.testnet.seda.xyz/execute?encoding=json' \
   -H 'Authorization: Bearer <bearer>' \
   -H 'Content-Type: application/json' \
   --data-raw '{
@@ -163,7 +163,6 @@ Replace `YOUR_PROGRAM_ID_HERE` with your deployed Oracle Program ID and `<bearer
 #### Query Parameters
 
 - **`encoding=json`**: Returns the result in JSON format for easy reading
-- **`injectLastResult=success`**: Only returns successful execution results
 
 #### Response Format
 
@@ -222,7 +221,7 @@ bun run deploy
 This Oracle Program fetches prediction market data from PolyMarket for climate and weather events:
 
 ```bash
-curl -L -X POST 'https://fast-api.testnet.seda.xyz/execute?encoding=json&injectLastResult=success' \
+curl -L -X POST 'https://fast-api.testnet.seda.xyz/execute?encoding=json' \
   -H 'Authorization: Bearer <bearer>' \
   -H 'Content-Type: application/json' \
   --data-raw '{
